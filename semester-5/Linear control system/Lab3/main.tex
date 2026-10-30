@@ -1,0 +1,380 @@
+% !TeX program = xelatex
+% Компилировать XeLaTeX (в Overleaf: Menu -> Compiler -> XeLaTeX)
+\documentclass[14pt,a4paper]{extarticle}
+
+
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\setotherlanguage{english}
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}\newfontfamily\cyrillicfont{Times New Roman}}
+  {\setmainfont{Liberation Serif}\newfontfamily\cyrillicfont{Liberation Serif}}
+\IfFontExistsTF{DejaVu Sans Mono}
+  {\setmonofont[Scale=0.85]{DejaVu Sans Mono}\newfontfamily\cyrillicfonttt[Scale=0.85]{DejaVu Sans Mono}}
+  {}
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array,tabularx,booktabs,multirow}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes.geometric,arrows.meta,calc}
+\usepackage[hidelinks]{hyperref}
+
+\onehalfspacing
+\setlength{\parindent}{1.25cm}
+\graphicspath{{images/}}
+
+\captionsetup{labelsep=endash,font=small}
+\captionsetup[table]{justification=raggedright,singlelinecheck=false}
+\AtBeginDocument{%
+  \renewcommand{\figurename}{Рисунок}%
+  \renewcommand{\tablename}{Таблица}%
+  
+}
+
+\titleformat{\section}{\normalsize\bfseries\centering}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{0pt}{1.5em}
+\titlespacing*{\subsection}{\parindent}{1.2em}{0.8em}
+\renewcommand{\cfttoctitlefont}{\hfill\normalsize\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill\null}
+\gappto\captionsrussian{\renewcommand{\contentsname}{СОДЕРЖАНИЕ}\renewcommand{\figurename}{Рисунок}\renewcommand{\tablename}{Таблица}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+
+\setlist{nosep,leftmargin=*,labelindent=\parindent}
+
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  columns=fullflexible,
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny,
+  keywordstyle=\color{blue!70!black}\bfseries,
+  commentstyle=\color{green!45!black},
+  stringstyle=\color{red!60!black},
+  extendedchars=true,
+  language=Python
+}
+
+\tikzset{
+  >={Stealth[length=2.2mm]},
+  block/.style={draw,rectangle,minimum height=9mm,minimum width=11mm,align=center},
+  sum/.style={draw,circle,minimum size=5mm,inner sep=0pt},
+  gainL/.style={draw,isosceles triangle,shape border rotate=180,isosceles triangle apex angle=60,
+                minimum height=8mm,inner sep=1pt,font=\small},
+  gainR/.style={draw,isosceles triangle,isosceles triangle apex angle=60,
+                minimum height=8mm,inner sep=1pt,font=\small},
+  dot/.style={circle,fill,inner sep=1.2pt},
+}
+
+\begin{document}
+
+% =================== ТИТУЛЬНЫЙ ЛИСТ ===================
+\begin{titlepage}
+\begin{center}
+\small
+МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ\\
+ФЕДЕРАЦИИ\\[0.3em]
+ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ ОБРАЗОВАТЕЛЬНОЕ\\
+УЧРЕЖДЕНИЕ ВЫСШЕГО ОБРАЗОВАНИЯ\\[0.3em]
+«Национальный исследовательский университет ИТМО»\\[0.8em]
+\normalsize
+ФАКУЛЬТЕТ СИСТЕМ УПРАВЛЕНИЯ И РОБОТОТЕХНИКИ
+
+\vfill
+
+{\bfseries ОТЧЕТ ПО ЛАБОРАТОРНОЙ РАБОТЕ №3}\\[0.5em]
+по дисциплине «Линейные системы автоматического управления»\\[0.5em]
+по теме:\\
+{\bfseries Вынужденное движение и показатели качества}
+
+\vfill
+
+\begin{flushright}
+\begin{tabular}{l}
+Выполнили:\\
+Басиони Абдельсалам Али Абдельсалам \\
+Боврджи Тамим Махер Мохаммед\\
+Май Хоанг Куан\\[1em]
+Преподаватель:\\
+Пашенко Артем Витальевич
+\end{tabular}
+\end{flushright}
+
+\vfill
+
+Санкт-Петербург\\
+2026
+\end{center}
+\end{titlepage}
+
+\setcounter{page}{2}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+\renewcommand{\lstlistingname}{Листинг}
+\lstset{keepspaces=true,showstringspaces=false,extendedchars=true,literate={а}{{а}}1{б}{{б}}1{в}{{в}}1{г}{{г}}1{д}{{д}}1{е}{{е}}1{ё}{{ё}}1{ж}{{ж}}1{з}{{з}}1{и}{{и}}1{й}{{й}}1{к}{{к}}1{л}{{л}}1{м}{{м}}1{н}{{н}}1{о}{{о}}1{п}{{п}}1{р}{{р}}1{с}{{с}}1{т}{{т}}1{у}{{у}}1{ф}{{ф}}1{х}{{х}}1{ц}{{ц}}1{ч}{{ч}}1{ш}{{ш}}1{щ}{{щ}}1{ъ}{{ъ}}1{ы}{{ы}}1{ь}{{ь}}1{э}{{э}}1{ю}{{ю}}1{я}{{я}}1{А}{{А}}1{Б}{{Б}}1{В}{{В}}1{Г}{{Г}}1{Д}{{Д}}1{Е}{{Е}}1{Ё}{{Ё}}1{Ж}{{Ж}}1{З}{{З}}1{И}{{И}}1{Й}{{Й}}1{К}{{К}}1{Л}{{Л}}1{М}{{М}}1{Н}{{Н}}1{О}{{О}}1{П}{{П}}1{Р}{{Р}}1{С}{{С}}1{Т}{{Т}}1{У}{{У}}1{Ф}{{Ф}}1{Х}{{Х}}1{Ц}{{Ц}}1{Ч}{{Ч}}1{Ш}{{Ш}}1{Щ}{{Щ}}1{Ъ}{{Ъ}}1{Ы}{{Ы}}1{Ь}{{Ь}}1{Э}{{Э}}1{Ю}{{Ю}}1{Я}{{Я}}1}
+% =================== ЦЕЛЬ ===================
+\section*{ЦЕЛЬ РАБОТЫ}
+\addcontentsline{toc}{section}{Цель работы}
+
+Ознакомление с понятием вынужденного движения линейных динамических систем. Освоение методов анализа качества переходных процессов линейных динамических систем по их временным характеристикам и расположению корней характеристического уравнения.
+
+Исходные данные (вариант 3):
+\begin{itemize}
+  \item Задание 1: корни $-0.5\pm 3j$, $\pm 3j$, $0.5\pm 3j$; $\beta = 1.7$; входные воздействия $u_1(t) = 2$, $u_2(t) = 0.7t$, $u_3(t) = \sin 3t$;
+  \item Задание 2: $a = 9$, $b = 20$, $c = 32$; вариант нечетный, поэтому $\delta_\text{п} = 2\%$.
+\end{itemize}
+
+\newpage
+% =================== ЗАДАНИЕ 1 ===================
+\section{. Вынужденное движение}
+
+\subsection{Математическая модель и схема моделирования}
+
+Исследуется система второго порядка
+\begin{equation}\label{eq:sys}
+\ddot y + a_1\dot y + a_0 y = \beta a_0 u, \qquad \beta = 1.7 
+\end{equation}
+Её передаточная функция $W(s) = \dfrac{\beta a_0}{s^2 + a_1 s + a_0}$, так что $W(0) = \beta$: при постоянном входе $u = \mathrm{const}$ установившееся значение (в устойчивом случае) равно $\beta u$.
+
+По заданным корням $\lambda_{1,2}$ характеристического полинома $s^2 + a_1 s + a_0 = (s-\lambda_1)(s-\lambda_2)$ находим
+\[
+a_1 = -(\lambda_1+\lambda_2), \qquad a_0 = \lambda_1\lambda_2 .
+\]
+
+\begin{table}[H]
+\centering
+\caption{Коэффициенты системы и тип устойчивости}
+\label{tab:coef}
+\begin{tabular}{cccccc}
+\toprule
+Эксперимент & $\lambda_{1,2}$ & $a_1$ & $a_0$ & $\beta a_0$ & Тип устойчивости \\
+\midrule
+2 & $-0.5 \pm 3j$ & $1$  & $9.25$ & $15.725$ & асимптотически устойчива \\
+3 & $\pm 3j$      & $0$  & $9$    & $15.3$   & на границе устойчивости \\
+4 & $0.5 \pm 3j$  & $-1$ & $9.25$ & $15.725$ & неустойчива \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Для моделирования уравнение \eqref{eq:sys} разрешается относительно старшей производной: $\ddot y = \beta a_0 u - a_1\dot y - a_0 y$. Соответствующая схема моделирования на двух интеграторах приведена на рисунке~\ref{fig:scheme}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=12mm]
+  \node (u) {$u$};
+  \node[gainR, right=8mm of u] (b) {$\beta a_0$};
+  \node[sum, right=10mm of b] (s) {};
+  \node[block, right=12mm of s] (i1) {$\displaystyle\int$};
+  \node[block, right=16mm of i1] (i2) {$\displaystyle\int$};
+  \node[right=16mm of i2] (y) {$y$};
+  \draw[->] (u) -- (b);
+  \draw[->] (b) -- node[above,pos=0.8]{\small $+$} (s);
+  \draw[->] (s) -- node[above]{$\ddot y$} (i1);
+  \draw[->] (i1) -- node[above]{$\dot y$} coordinate[pos=0.5] (dy) (i2);
+  \draw[->] (i2) -- coordinate[pos=0.4] (yy) (y);
+  \node[dot] at (dy) {};
+  \node[dot] at (yy) {};
+  \coordinate (r1) at ($(dy)+(0,-13mm)$);
+  \coordinate (r0) at ($(yy)+(0,-24mm)$);
+  \node[gainL] (ga1) at ($(r1)!0.5!(r1-|i1)+(-3mm,0)$) {$a_1$};
+  \node[gainL] (ga0) at ($(r0)!0.5!(r0-|i1)$) {$a_0$};
+  \draw (dy) -- (r1); \draw[->] (r1) -- (ga1);
+  \draw (yy) -- (r0); \draw[->] (r0) -- (ga0);
+  \draw[->] (ga1) -| node[right,pos=0.92]{\small $-$} ($(s.south)+(1.5mm,0)$);
+  \draw[->] (ga0) -| node[left,pos=0.95]{\small $-$} ($(s.south)-(1.5mm,0)$);
+  \node[above=1mm of i1] {\small $\dot y(0)$};
+  \node[above=1mm of i2] {\small $y(0)$};
+\end{tikzpicture}
+\caption{Схема моделирования системы \eqref{eq:sys}}
+\label{fig:scheme}
+\end{figure}
+
+\subsection{Аналитический расчет движения}
+
+Полное движение представляется суммой свободной и вынужденной составляющих $y(t) = y_\text{св}(t) + y_\text{в}(t)$. Вынужденная составляющая находится через преобразование Лапласа при нулевых начальных условиях:
+\[
+Y_\text{в}(s) = W(s)U(s), \qquad U_1(s) = \frac{2}{s},\quad U_2(s) = \frac{0.7}{s^2},\quad U_3(s) = \frac{3}{s^2+9}.
+\]
+Свободная составляющая при $y(0) = y_0$, $\dot y(0) = 0$: $Y_\text{св}(s) = \dfrac{(s + a_1)\,y_0}{s^2 + a_1 s + a_0}$. 
+
+\textbf{Эксперимент 2} ($\lambda_{1,2} = -0.5 \pm 3j$):
+\begin{align*}
+y_\text{св}(t) &= y_0\, e^{-0.5t}\left(\cos 3t + \tfrac16 \sin 3t\right),\\
+u_1:\ y_\text{в}(t) &= 3.4 - 3.4\,e^{-0.5t}\left(\cos 3t + \tfrac16\sin 3t\right),\\
+u_2:\ y_\text{в}(t) &= 1.19t - 0.129 + e^{-0.5t}\left(0.129\cos 3t - 0.375\sin 3t\right),\\
+u_3:\ y_\text{в}(t) &= 0.434\sin 3t - 5.206\cos 3t + e^{-0.5t}\left(5.206\cos 3t + 0.434\sin 3t\right).
+\end{align*}
+
+\textbf{Эксперимент 3} ($\lambda_{1,2} = \pm 3j$):
+\begin{align*}
+y_\text{св}(t) &= y_0 \cos 3t,\\
+u_1:\ y_\text{в}(t) &= 3.4 - 3.4\cos 3t,\\
+u_2:\ y_\text{в}(t) &= 1.19t - 0.397\sin 3t,\\
+u_3:\ y_\text{в}(t) &= 0.85\sin 3t - 2.55\,t\cos 3t.
+\end{align*}
+
+\textbf{Эксперимент 4} ($\lambda_{1,2} = 0.5 \pm 3j$):
+\begin{align*}
+y_\text{св}(t) &= y_0\, e^{0.5t}\left(\cos 3t - \tfrac16 \sin 3t\right),\\
+u_1:\ y_\text{в}(t) &= 3.4 - 3.4\,e^{0.5t}\left(\cos 3t - \tfrac16\sin 3t\right),\\
+u_2:\ y_\text{в}(t) &= 1.19t + 0.129 - e^{0.5t}\left(0.129\cos 3t + 0.375\sin 3t\right),\\
+u_3:\ y_\text{в}(t) &= 0.434\sin 3t + 5.206\cos 3t - e^{0.5t}\left(5.206\cos 3t - 0.434\sin 3t\right).
+\end{align*}
+
+Видно, что вынужденная составляющая содержит как частное решение, порожденное входом, так и моды системы $e^{\lambda_i t}$, причем коэффициенты при модах подобраны так, чтобы обеспечить нулевые начальные условия.
+
+\subsection{Результаты моделирования}
+
+Моделирование проведено при $y(0) \in \{-1;\ 0;\ 1\}$, $\dot y(0) = 0$ на интервале $t\in[0;10]$~с. 
+
+\newcommand{\simfig}[3]{%
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{#1}
+\caption{#2}
+\label{#3}
+\end{figure}}
+
+\simfig{t1_e2_u1}{Эксперимент 2 ($-0.5\pm 3j$), $u_1(t) = 2$}{fig:e2u1}
+\simfig{t1_e2_u2}{Эксперимент 2 ($-0.5\pm 3j$), $u_2(t) = 0.7t$}{fig:e2u2}
+\simfig{t1_e2_u3}{Эксперимент 2 ($-0.5\pm 3j$), $u_3(t) = \sin 3t$}{fig:e2u3}
+\simfig{t1_e3_u1}{Эксперимент 3 ($\pm 3j$), $u_1(t) = 2$}{fig:e3u1}
+\simfig{t1_e3_u2}{Эксперимент 3 ($\pm 3j$), $u_2(t) = 0.7t$}{fig:e3u2}
+\simfig{t1_e3_u3}{Эксперимент 3 ($\pm 3j$), $u_3(t) = \sin 3t$}{fig:e3u3}
+\simfig{t1_e4_u1}{Эксперимент 4 ($0.5\pm 3j$), $u_1(t) = 2$}{fig:e4u1}
+\simfig{t1_e4_u2}{Эксперимент 4 ($0.5\pm 3j$), $u_2(t) = 0.7t$}{fig:e4u2}
+\simfig{t1_e4_u3}{Эксперимент 4 ($0.5\pm 3j$), $u_3(t) = \sin 3t$}{fig:e4u3}
+\subsection{Анализ результатов}
+
+\textbf{Эксперимент 2: корни $-0.5 \pm 3j$, система устойчива.}
+\begin{itemize}
+  \item Движение от начальных условий затухает (множитель $e^{-0.5t}$). Поэтому через несколько секунд все три графика ($y(0) = -1;\ 0;\ 1$) совпадают, и начальные условия перестают влиять на выход.
+  \item При $u_1 = 2$ выход после затухающих колебаний устанавливается на значении $\beta \cdot 2 = 1.7 \cdot 2 = 3.4$.
+  \item При $u_2 = 0.7t$ выход растет по прямой с наклоном $\beta \cdot 0.7 = 1.19$ и немного отстает от нее.
+  \item При $u_3 = \sin 3t$ на выходе устанавливается синусоида той же частоты $\omega = 3$, но с амплитудой около $5.2$, то есть примерно в 5 раз больше, чем на входе. Причина: частота входа ($3$) совпадает с частотой собственных колебаний системы (мнимая часть корней тоже равна $3$), а затухание слабое.
+\end{itemize}
+
+\textbf{Эксперимент 3: корни $\pm 3j$, система на границе устойчивости.}
+\begin{itemize}
+  \item Движение от начальных условий не затухает: это колебания $y_0 \cos 3t$ с постоянной амплитудой. Поэтому три графика не совпадают на всем интервале.
+  \item При $u_1 = 2$ выход колеблется около уровня $3.4$ и не останавливается.
+  \item При $u_2 = 0.7t$ выход растет по прямой, а на нее наложены незатухающие колебания.
+  \item При $u_3 = \sin 3t$ частота входа равна собственной частоте системы, поэтому возникает резонанс: амплитуда колебаний растет линейно со временем (слагаемое $-2.55\,t\cos 3t$). Значит, такая система может давать неограниченный выход при ограниченном входе.
+\end{itemize}
+
+\textbf{Эксперимент 4: корни $0.5 \pm 3j$, система неустойчива.}
+\begin{itemize}
+  \item Во всех решениях есть растущий множитель $e^{0.5t}$, поэтому колебания неограниченно увеличиваются при любом входе. К $t = 10$~с амплитуда достигает сотен единиц.
+  \item Начальные условия меняют только величину и фазу этих растущих колебаний, но не их характер. Установившегося значения у выхода нет.
+\end{itemize}
+
+\textbf{Итог.} Чем левее корни на комплексной плоскости, тем быстрее исчезает влияние начальных условий. Если корни лежат левее мнимой оси, выход повторяет форму входа; если на мнимой оси, остаются незатухающие колебания; если правее, выход неограниченно растет.
+
+
+\subsection{Вывод} 
+Как можно наблюдать по графикам,начальные условия отражают стартовую позицию движения системы. Также в наших экспериментах начальные условия и входные воздействия не поменяли характер устойчивости системы.
+\newpage
+% =================== ЗАДАНИЕ 2 ===================
+\section{ Переходная характеристика}
+
+\subsection{Исследуемые системы}
+
+Рассматривается система третьего порядка
+\[
+W(s) = \frac{|\lambda_1\lambda_2\lambda_3|}{(s-\lambda_1)(s-\lambda_2)(s-\lambda_3)}, \qquad W(0) = 1,
+\]
+поэтому установившееся значение переходной характеристики $y_\text{у} = 1$. Для варианта 3 ($a = 9$, $b = 20$, $c = 32$) получаем шесть систем:
+\begin{align*}
+W_1(s) &= \frac{729}{(s+9)^3}, &
+W_2(s) &= \frac{3600}{(s+9)(s+20)^2}, \\
+W_3(s) &= \frac{9216}{(s+9)(s+32)^2}, &
+W_4(s) &= \frac{12816}{(s+9)(s^2+40s+1424)}, \\
+W_5(s) &= \frac{5184}{(s+32)(s^2+18s+162)}, &
+W_6(s) &= \frac{35360}{(s+32)(s^2+18s+1105)}.
+\end{align*}
+
+\subsection{Корневые показатели и их оценки}
+
+Степень устойчивости $\eta = \min_i |\mathrm{Re}\,\lambda_i|$, степень колебательности $\mu = \max_i \left|\mathrm{Im}\,\lambda_i/\mathrm{Re}\,\lambda_i\right|$. Оценки динамических показателей для $\delta_\text{п} = 2\%$:
+\[
+t_\text{п}^* \approx \frac{4}{\eta}, \qquad \sigma^* \approx e^{-\pi/\mu}\cdot 100\%.
+\]
+Во всех шести системах ближайший к мнимой оси полюс имеет $\mathrm{Re}\,\lambda = -9$, поэтому $\eta = 9$ и $t_\text{п}^* = 4/9 \approx 0.444$~с для всех наборов. Степени колебательности:
+\[
+\mu_{1,2,3} = 0,\qquad \mu_4 = \frac{32}{20} = 1.6,\qquad \mu_5 = \frac{9}{9} = 1,\qquad \mu_6 = \frac{32}{9} \approx 3.556 .
+\]
+
+\subsection{Переходные характеристики}
+
+Переходные характеристики построены численно время переходного процесса определялось как последний момент выхода $h(t)$ из трубки $1 \pm 0.02$, перерегулирование — по максимуму $h(t)$.
+
+\simfig{t2_1}{Переходная характеристика, набор 1: $\lambda = -9,\ -9,\ -9$}{fig:h1}
+\simfig{t2_2}{Переходная характеристика, набор 2: $\lambda = -9,\ -20,\ -20$}{fig:h2}
+\simfig{t2_3}{Переходная характеристика, набор 3: $\lambda = -9,\ -32,\ -32$}{fig:h3}
+\simfig{t2_4}{Переходная характеристика, набор 4: $\lambda = -9,\ -20 \pm 32j$}{fig:h4}
+\simfig{t2_5}{Переходная характеристика, набор 5: $\lambda = -32,\ -9 \pm 9j$}{fig:h5}
+\simfig{t2_6}{Переходная характеристика, набор 6: $\lambda = -32,\ -9 \pm 32j$}{fig:h6}
+\simfig{t2_all}{Сравнение переходных характеристик всех наборов}{fig:hall}
+
+\subsection{Результаты вычислений}
+
+\begin{table}[H]
+\centering
+\caption{Результаты вычислений для Задания 2 ($\delta_\text{п} = 2\%$)}
+\label{tab:res}
+\small
+\begin{tabular}{c|ccc|cc|cc|cc}
+\toprule
+\multirow{2}{*}{№} & \multicolumn{3}{c|}{Корни} & \multicolumn{2}{c|}{Корневые} & \multicolumn{2}{c|}{Оценки} & \multicolumn{2}{c}{Динамические} \\
+ & $\lambda_1$ & $\lambda_2$ & $\lambda_3$ & $\eta$ & $\mu$ & $t_\text{п}^*$, с & $\sigma^*$, \% & $t_\text{п}$, с & $\sigma$, \% \\
+\midrule
+1 & $-9$  & $-9$        & $-9$        & 9 & 0     & 0.444 & 0     & 0.835 & 0 \\
+2 & $-9$  & $-20$       & $-20$       & 9 & 0     & 0.444 & 0     & 0.567 & 0 \\
+3 & $-9$  & $-32$       & $-32$       & 9 & 0     & 0.444 & 0     & 0.508 & 0 \\
+4 & $-9$  & $-20+32j$   & $-20-32j$   & 9 & 1.6   & 0.444 & 14.04 & 0.459 & 0 \\
+5 & $-32$ & $-9+9j$     & $-9-9j$     & 9 & 1     & 0.444 & 4.32  & 0.500 & 3.86 \\
+6 & $-32$ & $-9+32j$    & $-9-32j$    & 9 & 3.556 & 0.444 & 41.33 & 0.361 & 24.54 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Анализ результатов}
+
+\textbf{Время переходного процесса.} Хотя у всех систем одинаковая степень устойчивости $\eta = 9$, фактическое $t_\text{п}$ меняется от $0.361$ до $0.835$~с. Наибольшая ошибка оценки — у набора 1 с трехкратным полюсом: переходная характеристика $h(t) = 1 - e^{-9t}\left(1 + 9t + 40.5t^2\right)$ содержит полиномиальные множители, замедляющие затухание, и $t_\text{п}$ почти вдвое превышает $t_\text{п}^*$. В наборах 2 и 3 по мере удаления остальных полюсов от доминантного ($-20 \to -32$) фактическое время приближается к оценке ($0.567 \to 0.508$~с), что подтверждает: оценка точнее, когда доминантный корень хорошо отделен от остальных. В наборе 4 доминантным является вещественный полюс $-9$, а комплексная пара $-20\pm 32j$ затухает быстро, поэтому $t_\text{п} = 0.459$~с близко к оценке. В наборах 5 и 6 доминантна комплексная пара; в наборе 6 $t_\text{п} = 0.361 < t_\text{п}^*$, поскольку коэффициент при колебательной моде меньше единицы и огибающая входит в трубку $\pm2\%$ раньше, чем $e^{-\eta t}$.
+
+\textbf{Перерегулирование.} Для наборов 1--3 $\mu = 0$, все полюсы вещественные, нулей нет, и переходные характеристики монотонны: $\sigma = \sigma^* = 0$. В наборе 4 $\mu = 1.6$ дает оценку $\sigma^* = 14\%$, однако фактически перерегулирования нет: степень колебательности определяется недоминантной комплексной парой, чьи колебания успевают затухнуть, пока медленная мода $e^{-9t}$ еще не довела выход до установившегося значения. Это иллюстрирует, что оценка $\sigma^* = e^{-\pi/\mu}$ справедлива лишь тогда, когда $\mu$ задается доминантными корнями. В наборе 5 доминантная пара $-9 \pm 9j$ определяет и $\eta$, и $\mu$, а третий полюс $-32$ расположен значительно левее — оценка $4.32\%$ хорошо согласуется с фактическими $3.86\%$. В наборе 6 оценка $41.3\%$ существенно превышает фактические $24.5\%$: формула является верхней оценкой, а вещественный полюс $-32$, хотя и удален, вносит дополнительное сглаживание фронта и снижает выброс.
+
+% =================== ВЫВОДЫ ===================
+\newpage
+\section*{ВЫВОДЫ}
+\addcontentsline{toc}{section}{Выводы}
+
+\begin{enumerate}
+  \item Вынужденная составляющая движения определяется только свойствами системы и входным воздействием; начальные условия влияют на полное движение лишь через свободную составляющую. Для асимптотически устойчивой системы это влияние исчезает со временем, и движение сходится к установившемуся (для $u = 2$ — к значению $\beta u = 3.4$).
+  \item Для системы на границе устойчивости влияние начальных условий сохраняется бесконечно долго (незатухающие колебания), а при совпадении частоты входа с собственной частотой ($u = \sin 3t$, $\lambda = \pm 3j$) наблюдается резонанс с линейно растущей амплитудой. Для неустойчивой системы выход неограниченно растет при любом входе.
+  \item Аналитические решения, полученные через преобразование Лапласа, совпали с результатами численного моделирования.
+  \item Степень устойчивости $\eta$ характеризует быстродействие лишь приближенно: при одинаковом $\eta = 9$ фактическое время переходного процесса изменялось более чем в два раза. Оценка $t_\text{п}^* = 4/\eta$ наиболее точна при хорошо отделенном доминантном корне и сильно занижает $t_\text{п}$ при кратных полюсах.
+  \item Оценка перерегулирования $\sigma^* = e^{-\pi/\mu}$ применима, когда степень колебательности определяется доминантной парой; в этом случае (набор 5) она близка к фактическому значению, в остальных случаях является завышенной верхней оценкой. Если же комплексная пара не доминантна (набор 4), перерегулирования может не быть вовсе.
+\end{enumerate}
+
+\end{document}

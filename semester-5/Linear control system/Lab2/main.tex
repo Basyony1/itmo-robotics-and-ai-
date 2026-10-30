@@ -1,0 +1,771 @@
+% !TeX program = xelatex
+% Компилировать XeLaTeX (в Overleaf: Menu -> Compiler -> XeLaTeX)
+\documentclass[14pt,a4paper]{extarticle}
+
+
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\setotherlanguage{english}
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}\newfontfamily\cyrillicfont{Times New Roman}}
+  {\setmainfont{Liberation Serif}\newfontfamily\cyrillicfont{Liberation Serif}}
+\IfFontExistsTF{DejaVu Sans Mono}
+  {\setmonofont[Scale=0.85]{DejaVu Sans Mono}\newfontfamily\cyrillicfonttt[Scale=0.85]{DejaVu Sans Mono}}
+  {}
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array,tabularx,booktabs,multirow}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes.geometric,arrows.meta,calc}
+\usepackage[hidelinks]{hyperref}
+
+\onehalfspacing
+\setlength{\parindent}{1.25cm}
+\graphicspath{{images/}}
+
+\captionsetup{labelsep=endash,font=small}
+\captionsetup[table]{justification=raggedright,singlelinecheck=false}
+\AtBeginDocument{%
+  \renewcommand{\figurename}{Рисунок}%
+  \renewcommand{\tablename}{Таблица}%
+  
+}
+
+\titleformat{\section}{\normalsize\bfseries\centering}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{0pt}{1.5em}
+\titlespacing*{\subsection}{\parindent}{1.2em}{0.8em}
+\renewcommand{\cfttoctitlefont}{\hfill\normalsize\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill\null}
+\gappto\captionsrussian{\renewcommand{\contentsname}{СОДЕРЖАНИЕ}\renewcommand{\figurename}{Рисунок}\renewcommand{\tablename}{Таблица}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+
+\setlist{nosep,leftmargin=*,labelindent=\parindent}
+
+\lstset{
+  basicstyle=\ttfamily\scriptsize,
+  columns=fullflexible,
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny,
+  keywordstyle=\color{blue!70!black}\bfseries,
+  commentstyle=\color{green!45!black},
+  stringstyle=\color{red!60!black},
+  extendedchars=true,
+  language=Python
+}
+
+\tikzset{
+  >={Stealth[length=2.2mm]},
+  block/.style={draw,rectangle,minimum height=9mm,minimum width=11mm,align=center},
+  sum/.style={draw,circle,minimum size=5mm,inner sep=0pt},
+  gainL/.style={draw,isosceles triangle,shape border rotate=180,isosceles triangle apex angle=60,
+                minimum height=8mm,inner sep=1pt,font=\small},
+  gainR/.style={draw,isosceles triangle,isosceles triangle apex angle=60,
+                minimum height=8mm,inner sep=1pt,font=\small},
+  dot/.style={circle,fill,inner sep=1.2pt},
+}
+
+\begin{document}
+
+% =================== ТИТУЛЬНЫЙ ЛИСТ ===================
+\begin{titlepage}
+\begin{center}
+\small
+МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ\\
+ФЕДЕРАЦИИ\\[0.3em]
+ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ АВТОНОМНОЕ ОБРАЗОВАТЕЛЬНОЕ\\
+УЧРЕЖДЕНИЕ ВЫСШЕГО ОБРАЗОВАНИЯ\\[0.3em]
+«Национальный исследовательский университет ИТМО»\\[0.8em]
+\normalsize
+ФАКУЛЬТЕТ СИСТЕМ УПРАВЛЕНИЯ И РОБОТОТЕХНИКИ
+
+\vfill
+
+{\bfseries ОТЧЕТ ПО ЛАБОРАТОРНОЙ РАБОТЕ №2}\\[0.5em]
+по дисциплине «Линейные системы автоматического управления»\\[0.5em]
+по теме:\\
+{\bfseries Свободное движение и устойчивость}
+
+\vfill
+
+\begin{flushright}
+\begin{tabular}{l}
+Выполнили:\\
+Басиони Абдельсалам Али Абдельсалам\\
+Боврджи Тамим Махер Мохаммед\\
+Май Хоанг Куан\\[1em]
+Преподаватель:\\
+Пашенко Артем Витальевич
+\end{tabular}
+\end{flushright}
+
+\vfill
+
+Санкт-Петербург\\
+2026
+\end{center}
+\end{titlepage}
+
+\setcounter{page}{2}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+% =================== ЗАДАНИЕ 1 ===================
+\section{СВОБОДНОЕ ДВИЖЕНИЕ}
+
+Рассмотрим линейную систему второго порядка, описываемую дифференциальным уравнением
+\begin{equation}\label{eq:sys2}
+  \ddot y + a_1\dot y + a_0 y = u
+\end{equation}
+с начальными условиями $y(0)=y_0$, $\dot y(0)=\dot y_0$.
+Так как исследуется свободное движение, внешнее воздействие принимается равным нулю: $u(t)\equiv 0$.
+
+\subsection{Схема моделирования}
+
+Выразим старшую производную: $\ddot y = u - a_1\dot y - a_0 y$.
+Схема моделирования, построенная из блоков элементарных операций (сумматор, усилители, интеграторы), приведена на рисунке~\ref{fig:scheme1}.
+Начальные условия $\dot y(0)$ и $y(0)$ задаются в первом и втором интеграторах соответственно.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\linewidth]{scheme1.png}
+    \caption{Схема моделирования системы второго порядка}
+    \label{fig:scheme1}
+\end{figure}
+
+
+\subsection{Аналитические расчёты}
+
+Характеристическое уравнение системы \eqref{eq:sys2}:
+\[
+  \lambda^2 + a_1\lambda + a_0 = 0 .
+\]
+По теореме Виета коэффициенты выражаются через корни:
+\[
+  a_1 = -(\lambda_1+\lambda_2), \qquad a_0 = \lambda_1\lambda_2 .
+\]
+Свободная составляющая движения является решением однородного уравнения и в зависимости от вида корней имеет вид:
+\begin{itemize}
+  \item различные вещественные корни:
+    \[ y_{\text{св}}(t) = c_1e^{\lambda_1 t} + c_2e^{\lambda_2 t}; \]
+  \item комплексно-сопряжённые корни $\lambda_{1,2}=\alpha\pm j\beta$:
+    \[ y_{\text{св}}(t) = e^{\alpha t}\left(c_1\cos\beta t + c_2\sin\beta t\right). \]
+\end{itemize}
+Константы $c_1$, $c_2$ находятся из начальных условий $y(0)=y_0$, $\dot y(0)=\dot y_0$.
+
+
+\paragraph{Эксперимент 1.} $\lambda_1=-3$, $\lambda_2=-2$, $y_0=1$, $\dot y_0=0$.
+
+Коэффициенты:
+\[
+  a_1 = -(\lambda_1 + \lambda_2) = -((-3) + (-2)) = 5
+\]
+\[
+  a_0 = \lambda_1 \cdot \lambda_2 = (-3) \cdot (-2) = 6
+\]
+
+Дифференциальное уравнение:
+\begin{equation}
+  \ddot y + 5\dot y + 6y = 0
+\end{equation}
+
+Общее решение для различных вещественных корней:
+\[
+  y(t) = C_1 e^{-3t} + C_2 e^{-2t}
+\]
+
+Производная:
+\[
+  \dot y(t) = -3C_1 e^{-3t} - 2C_2 e^{-2t}
+\]
+
+Начальные условия при $t = 0$:
+\[
+  \begin{cases}
+    y(0) = C_1 + C_2 = 1 \\
+    \dot y(0) = -3C_1 - 2C_2 = 0
+  \end{cases}
+  \quad\Rightarrow\quad
+  \begin{cases}
+    C_1 = -2 \\
+    C_2 = 3
+  \end{cases}
+\]
+
+Итоговое решение:
+\begin{equation}
+  y_{\text{св}}(t) = 3e^{-2t} - 2e^{-3t}
+\end{equation}
+
+
+\paragraph{Эксперимент 2.} $\lambda_{1,2}=-0.5\pm j3$, $y_0=1$, $\dot y_0=0$.
+
+Коэффициенты:
+\[
+  a_1 = -(\lambda_1 + \lambda_2) = -((-0.5 + j3) + (-0.5 - j3)) = 1
+\]
+\[
+  a_0 = \lambda_1 \cdot \lambda_2 = (-0.5 + j3)(-0.5 - j3) = (-0.5)^2 + 3^2 = 9.25
+\]
+
+Дифференциальное уравнение:
+\begin{equation}
+  \ddot y + \dot y + 9.25y = 0
+\end{equation}
+
+Общее решение для комплексно-сопряженных корней:
+\[
+  y(t) = e^{-0.5t}(C_1 \cos 3t + C_2 \sin 3t)
+\]
+
+Производная:
+\[
+  \dot y(t) = e^{-0.5t}\left[(C_1 \cos 3t + C_2 \sin 3t)(-0.5) + (-3C_1 \sin 3t + 3C_2 \cos 3t)\right]
+\]
+
+Начальные условия при $t = 0$:
+\[
+  \begin{cases}
+    y(0) = C_1 = 1 \\
+    \dot y(0) = -0.5 \cdot C_1 + 3 \cdot C_2 = 0
+  \end{cases}
+  \quad\Rightarrow\quad
+  \begin{cases}
+    C_1 = 1 \\
+    C_2 = \frac{1}{6}
+  \end{cases}
+\]
+
+Итоговое решение:
+\begin{equation}
+  y_{\text{св}}(t) = e^{-0.5t}\left(\cos 3t + \frac{1}{6}\sin 3t\right)
+\end{equation}
+
+
+\paragraph{Эксперимент 3.} $\lambda_{1,2}=\pm j3$, $y_0=1$, $\dot y_0=0$.
+
+Коэффициенты:
+\[
+  a_1 = -(j3 + (-j3)) = 0
+\]
+\[
+  a_0 = (j3)(-j3) = 3^2 = 9
+\]
+
+Дифференциальное уравнение:
+\begin{equation}
+  \ddot y + 9y = 0
+\end{equation}
+
+Общее решение для чисто мнимых корней:
+\[
+  y(t) = C_1 \cos 3t + C_2 \sin 3t
+\]
+
+Производная:
+\[
+  \dot y(t) = -3C_1 \sin 3t + 3C_2 \cos 3t
+\]
+
+Начальные условия при $t = 0$:
+\[
+  \begin{cases}
+    y(0) = C_1 = 1 \\
+    \dot y(0) = 3C_2 = 0
+  \end{cases}
+  \quad\Rightarrow\quad
+  \begin{cases}
+    C_1 = 1 \\
+    C_2 = 0
+  \end{cases}
+\]
+
+Итоговое решение:
+\begin{equation}
+  y_{\text{св}}(t) = \cos 3t
+\end{equation}
+
+
+\paragraph{Эксперимент 4.} $\lambda_{1,2}=0.5\pm j3$, $y_0=0.05$, $\dot y_0=0$.
+
+Коэффициенты:
+\[
+  a_1 = -((0.5 + j3) + (0.5 - j3)) = -1
+\]
+\[
+  a_0 = (0.5 + j3)(0.5 - j3) = 0.5^2 + 3^2 = 9.25
+\]
+
+Дифференциальное уравнение:
+\begin{equation}
+  \ddot y - \dot y + 9.25y = 0
+\end{equation}
+
+Общее решение для комплексно-сопряженных корней с положительной вещественной частью:
+\[
+  y(t) = e^{0.5t}(C_1 \cos 3t + C_2 \sin 3t)
+\]
+
+Производная:
+\[
+  \dot y(t) = e^{0.5t}\left[(C_1 \cos 3t + C_2 \sin 3t)(0.5) + (-3C_1 \sin 3t + 3C_2 \cos 3t)\right]
+\]
+
+Начальные условия при $t = 0$:
+\[
+  \begin{cases}
+    y(0) = C_1 = 0.05 \\
+    \dot y(0) = 0.5 \cdot C_1 + 3 \cdot C_2 = 0
+  \end{cases}
+  \quad\Rightarrow\quad
+  \begin{cases}
+    C_1 = 0.05 \\
+    C_2 = -\frac{1}{120}
+  \end{cases}
+\]
+
+Итоговое решение:
+\begin{equation}
+  y_{\text{св}}(t) = e^{0.5t}\left(0.05 \cos 3t - \frac{1}{120} \sin 3t\right)
+\end{equation}
+
+
+\paragraph{Эксперимент 5.} $\lambda_1=3$, $\lambda_2=2$, $y_0=0.05$, $\dot y_0=0$.
+
+Коэффициенты:
+\[
+  a_1 = -(3 + 2) = -5
+\]
+\[
+  a_0 = 3 \cdot 2 = 6
+\]
+
+Дифференциальное уравнение:
+\begin{equation}
+  \ddot y - 5\dot y + 6y = 0
+\end{equation}
+
+Общее решение для различных вещественных корней:
+\[
+  y(t) = C_1 e^{3t} + C_2 e^{2t}
+\]
+
+Производная:
+\[
+  \dot y(t) = 3C_1 e^{3t} + 2C_2 e^{2t}
+\]
+
+Начальные условия при $t = 0$:
+\[
+  \begin{cases}
+    y(0) = C_1 + C_2 = 0.05 \\
+    \dot y(0) = 3C_1 + 2C_2 = 0
+  \end{cases}
+  \quad\Rightarrow\quad
+  \begin{cases}
+    C_1 = -0.1 \\
+    C_2 = 0.15
+  \end{cases}
+\]
+
+Итоговое решение:
+\begin{equation}
+  y_{\text{св}}(t) = 0.15e^{2t} - 0.1e^{3t}
+\end{equation}
+
+
+\paragraph{Эксперимент 6.} $\lambda_1=-0.9$, $\lambda_2=0.9$, $y_0=0$, $\dot y_0=0.1$.
+
+Коэффициенты:
+\[
+  a_1 = -((-0.9) + 0.9) = 0
+\]
+\[
+  a_0 = (-0.9) \cdot 0.9 = -0.81
+\]
+
+Дифференциальное уравнение:
+\begin{equation}
+  \ddot y - 0.81y = 0
+\end{equation}
+
+Общее решение для вещественных корней:
+\[
+  y(t) = C_1 e^{-0.9t} + C_2 e^{0.9t}
+\]
+
+Производная:
+\[
+  \dot y(t) = -0.9C_1 e^{-0.9t} + 0.9C_2 e^{0.9t}
+\]
+
+Начальные условия при $t = 0$:
+\[
+  \begin{cases}
+    y(0) = C_1 + C_2 = 0 \\
+    \dot y(0) = -0.9C_1 + 0.9C_2 = 0.1
+  \end{cases}
+  \quad\Rightarrow\quad
+  \begin{cases}
+    C_1 = -\frac{1}{18} \\
+    C_2 = \frac{1}{18}
+  \end{cases}
+\]
+
+Итоговое решение:
+\begin{equation}
+  y_{\text{св}}(t) = \frac{1}{18}\left(e^{0.9t} - e^{-0.9t}\right) = \frac{1}{9}\operatorname{sh}(0.9t)
+\end{equation}
+
+
+
+\subsection{Результаты вычислений}
+
+Результаты расчётов сведены в таблицу~\ref{tab:task1}. Тип устойчивости определён по корневому критерию.
+
+\begin{table}[H]
+\caption{Результаты вычислений для Задания 1}\label{tab:task1}
+\centering\footnotesize
+\renewcommand{\arraystretch}{1.5}
+\setlength{\tabcolsep}{3pt}
+\begin{tabularx}{\textwidth}{|c|c|c|c|c|c|c|>{\centering\arraybackslash}X|>{\centering\arraybackslash}p{2.6cm}|}
+\hline
+№ & $\lambda_1$ & $\lambda_2$ & $a_0$ & $a_1$ & $y(0)$ & $\dot y(0)$ & $y_{\text{св}}(t)$ & Тип устойчивости \\ \hline
+1 & $-3$ & $-2$ & $6$ & $5$ & $1$ & $0$ & $3e^{-2t}-2e^{-3t}$ & асимптотически устойчива \\ \hline
+2 & $-0.5+j3$ & $-0.5-j3$ & $9.25$ & $1$ & $1$ & $0$ & $e^{-0.5t}\!\left(\cos 3t+\frac16\sin 3t\right)$ & асимптотически устойчива \\ \hline
+3 & $j3$ & $-j3$ & $9$ & $0$ & $1$ & $0$ & $\cos 3t$ & на границе устойчивости \\ \hline
+4 & $0.5+j3$ & $0.5-j3$ & $9.25$ & $-1$ & $0.05$ & $0$ & $e^{0.5t}\!\left(0.05\cos 3t-\frac{1}{120}\sin 3t\right)$ & неустойчива \\ \hline
+5 & $3$ & $2$ & $6$ & $-5$ & $0.05$ & $0$ & $0.15e^{2t}-0.1e^{3t}$ & неустойчива \\ \hline
+6 & $-0.9$ & $0.9$ & $-0.81$ & $0$ & $0$ & $0.1$ & $\frac{1}{18}\left(e^{0.9t}-e^{-0.9t}\right)$ & неустойчива \\ \hline
+\end{tabularx}
+\end{table}
+
+
+\newpage
+\subsection{Результаты моделирования}
+
+На рисунках~\ref{fig:t1e1}--\ref{fig:t1e6} приведены сравнительные графики выхода модели $y(t)$ и аналитически рассчитанной свободной составляющей $y_{\text{св}}(t)$. На всех графиках сплошной красной линией показан выход модели $y(t)$, синей пунктирной линией~--- аналитическое решение $y_{\text{св}}(t)$.
+
+\newcommand{\taskonefig}[3]{%
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{#1}
+\caption{#2}\label{#3}
+\end{figure}}
+
+\taskonefig{experiment_1}{Эксперимент 1: $\lambda_{1,2}=-3,\,-2$}{fig:t1e1}
+\taskonefig{experiment_2}{Эксперимент 2: $\lambda_{1,2}=-0.5\pm j3$}{fig:t1e2}
+\taskonefig{experiment_3}{Эксперимент 3: $\lambda_{1,2}=\pm j3$}{fig:t1e3}
+\taskonefig{experiment_4}{Эксперимент 4: $\lambda_{1,2}=0.5\pm j3$}{fig:t1e4}
+\taskonefig{experiment_5}{Эксперимент 5: $\lambda_{1,2}=3,\,2$ (нулевые начальные условия)}{fig:t1e5}
+\taskonefig{experiment_6}{Эксперимент 6: $\lambda_{1,2}=-0.9,\,0.9$}{fig:t1e6}
+
+
+\newpage
+\subsection{Выводы по заданию 1}
+
+Было исследовано свободное движение линейных систем второго порядка. Установлена прямая связь между расположением корней характеристического уравнения и устойчивостью системы. Результаты аналитического расчета полностью подтвердились данными компьютерного моделирования.
+
+\begin{enumerate}
+    \item \textbf{Эксперимент 1:} Система асимптотически устойчива ($\lambda_{1,2}$ — вещественные отрицательные). На графике видно, что свободное движение плавно затухает и стремится к нулю ($\operatorname{Re}\lambda_1 < 0, \operatorname{Re}\lambda_2 < 0$).
+    
+    \item \textbf{Эксперимент 2:} Система асимптотически устойчива ($\lambda_{1,2}$ — комплексно-сопряженные с отрицательной вещественной частью). На графике наблюдаются затухающие колебания, амплитуда которых со временем стремится к нулю ($\operatorname{Re}\lambda_1 < 0, \operatorname{Re}\lambda_2 < 0$).
+    
+    \item \textbf{Эксперимент 3:} Система находится на границе устойчивости ($\lambda_{1,2}$ — чисто мнимые корни). На графике возникают незатухающие гармонические колебания с постоянной амплитудой ($\operatorname{Re}\lambda_1 = \operatorname{Re}\lambda_2 = 0, \operatorname{Im}\lambda_{1,2} \neq 0$).
+    
+    \item \textbf{Эксперимент 4:} Система неустойчива ($\lambda_{1,2}$ — комплексно-сопряженные с положительной вещественной частью). На графике наблюдаются расходящиеся колебания с увеличивающейся амплитудой ($\operatorname{Re}\lambda_1 > 0, \operatorname{Re}\lambda_2 > 0$).
+    
+    \item \textbf{Эксперимент 5:} Система неустойчива ($\lambda_{1,2}$ — положительные вещественные корни). Свободное движение экспоненциально возрастает по модулю ($\operatorname{Re}\lambda_1 > 0, \operatorname{Re}\lambda_2 > 0$).
+    
+    \item \textbf{Эксперимент 6:} Система неустойчива (корни имеют разные знаки, один из них положительный). Свободное движение неограниченно возрастает со временем ($\operatorname{Re}\lambda_2 > 0$).
+\end{enumerate}
+
+
+\newpage
+\section{ОБЛАСТЬ УСТОЙЧИВОСТИ}
+
+\subsection{Схема моделирования}
+
+В соответствии с заданием собрана схема моделирования линейной системы третьего порядка (см. рисунок~\ref{fig:scheme2}), включающая в себя пропорциональный регулятор с коэффициентом $K$, два апериодических звена с постоянными времени $T_1$ и $T_2$, а также интегрирующее звено.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.1\linewidth]{images/scheme2.png} 
+    \caption{Структурная схема линейной системы третьего порядка}
+    \label{fig:scheme2}
+\end{figure}
+
+Значения постоянных времени $T_1$ и $T_2$ заданы на основе первого набора корней характеристического уравнения из Задания 1 ($\lambda_1 = -3$, $\lambda_2 = -2$). Полюсы передаточных функций звеньев соответствуют данным корням:
+\[
+  T_1 = -\frac{1}{\lambda_1} = \frac{1}{3} \approx 0.333\text{ с}, \qquad
+  T_2 = -\frac{1}{\lambda_2} = \frac{1}{2} = 0.5\text{ с}.
+\]
+
+\subsection{Аналитическое определение области устойчивости}
+
+Для построенной структурной схемы (см. рисунок~\ref{fig:scheme2}) передаточная функция разомкнутой системы имеет вид:
+\[
+  W(s) = \frac{K}{s(T_1s + 1)(T_2s + 1)}.
+\]
+Характеристическое уравнение замкнутой системы определяется как $1 + W(s) = 0$:
+\[
+  T_1 T_2 s^3 + (T_1 + T_2) s^2 + s + K = 0.
+\]
+Коэффициенты характеристического полинома:
+\[
+  a_3 = T_1 T_2, \quad a_2 = T_1 + T_2, \quad a_1 = 1, \quad a_0 = K.
+\]
+
+Для исследования устойчивости применим критерий Гурвица. Главные угловые миноры матрицы Гурвица для системы 3-го порядка:
+\[
+  \Delta_1 = a_2 = T_1 + T_2 > 0,
+\]
+\[
+  \Delta_2 = a_2 a_1 - a_3 a_0 = (T_1 + T_2) - (T_1 T_2)K > 0.
+\]
+
+При фиксированном значении $T_2 = 0.5$ с, граница устойчивости ($\Delta_2 = 0$) задается уравнением:
+\[
+  K = \frac{1}{T_1} + \frac{1}{T_2} = \frac{1}{T_1} + 2.
+\]
+
+Таким образом, область устойчивости в пространстве параметров $(K, T_1)$ определяется неравенствами:
+\[
+  T_1 > 0, \quad 0 < K < \frac{1}{T_1} + 2.
+\]
+
+На рисунке ниже представлено графическое изображение границы и области устойчивости системы на плоскости параметров $(K, T_1)$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/stability_region.png}
+    \caption{Область устойчивости в пространстве параметров $K$ и $T_1$}
+    \label{fig:stability_region}
+\end{figure}
+
+
+\subsection{Выбор параметров для моделирования переходных процессов}
+
+Для исследования динамики системы зададим три набора параметров ($T_1 = 1/3$ с, $T_2 = 0.5$ с):
+\begin{table}[H]
+    \centering
+    \caption{Наборы параметров для моделирования}
+    \renewcommand{\arraystretch}{1.4} 
+    \setlength{\tabcolsep}{10pt}     
+    \begin{tabular}{|p{7cm}|c|c|c|}
+        \hline
+        \textbf{Состояние системы} & \textbf{$K$} & \textbf{$T_1$, с} & \textbf{$T_2$, с} \\ \hline
+        а) Асимптотически устойчивая & $2$ & $1/3$ & $0.5$ \\ \hline
+        б) На границе устойчивости   & $5$ & $1/3$ & $0.5$ \\ \hline
+        в) Неустойчивая система      & $7$ & $1/3$ & $0.5$ \\ \hline
+    \end{tabular}
+    \label{tab:params}
+\end{table}
+
+\begin{enumerate}
+    \item[а)] \textbf{Устойчивая система ($K = 2$):} условие $2 < 5$ выполнено, точка внутри области.
+    \item[б)] \textbf{На границе ($K = 5$):} критическое значение ($5 = 5$), точка лежит на границе.
+    \item[в)] \textbf{Неустойчивая система ($K = 7$):} условие не выполнено ($7 > 5$), точка в зоне неустойчивости.
+\end{enumerate}
+
+
+\subsection{Моделирование свободного движения системы}
+
+Для каждого из трех выбранных наборов параметров ($T_1 = 1/3$ с, $T_2 = 0.5$ с) было выполнено моделирование свободного движения системы при нулевом внешнем воздействии ($g(t) = 0$) и ненулевых начальных условиях: $y(0) = 1$, $\dot{y}(0) = 0$, $\ddot{y}(0) = 0$.
+
+\begin{enumerate}
+    \item[а)] \textbf{Асимптотически устойчивая система ($K = 2$):}
+    На графике (рисунок~\ref{fig:free_stable}) видно, что благодаря отрицательной обратной связи и нахождению внутри области устойчивости, свободные колебания затухают со временем, и система возвращается в нулевое положение равновесия.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.85\linewidth]{free_stable.png}
+        \caption{Свободное движение асимптотически устойчивой системы ($K = 2, y(0) = 1$)}
+        \label{fig:free_stable}
+    \end{figure}
+
+    \item[б)] \textbf{Система на границе устойчивости ($K = 5$):}
+    На графике (рисунок~\ref{fig:free_boundary}) наблюдаются незатухающие гармонические колебания постоянной амплитуды, так как корни характеристического уравнения лежат на мнимой оси.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.85\linewidth]{free_boundary.png}
+        \caption{Свободное движение на границе устойчивости ($K = 5, y(0) = 1$)}
+        \label{fig:free_boundary}
+    \end{figure}
+
+    \item[в)] \textbf{Неустойчивая система ($K = 7$):}
+    На графике (рисунок~\ref{fig:free_unstable}) зафиксирован расходящийся колебательный процесс с экспоненциально нарастающей амплитудой, что подтверждает неустойчивость системы при данном коэффициенте передачи.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.85\linewidth]{free_unstable.png}
+        \caption{Свободное движение неустойчивой системы ($K = 7, y(0) = 1$)}
+        \label{fig:free_unstable}
+    \end{figure}
+\end{enumerate}
+
+\subsection{Выводы по заданию 2}
+
+На основе аналитического расчета и компьютерного моделирования линейной системы третьего порядка можно сделать следующие выводы:
+\begin{enumerate}
+    \item Анализ по критерию Гурвица позволил определить критическое значение коэффициента передачи регулятора $K_{кр} = 5$ для заданных параметров $T_1 = 1/3$ с и $T_2 = 0.5$ с.
+    \item Моделирование свободного движения при начальных условиях $y(0) = 1$, $\dot{y}(0) = 0$, $\ddot{y}(0) = 0$ полностью подтвердило теоретические расчёты:
+    \begin{itemize}
+        \item При $K = 2$ система асимптотически устойчива (колебания затухают);
+        \item При $K = 5$ система находится на границе устойчивости (наблюдаются незатухающие колебания);
+        \item При $K = 7$ система неустойчива (амплитуда нарастает по экспоненте).
+    \end{itemize}
+\end{enumerate}
+
+
+\newpage
+\section{СИНТЕЗ КОМАНДНОГО ГЕНЕРАТОРА}
+
+\subsection{Аналитические расчеты}
+
+Требуется спроектировать автономный командный генератор (КГ), способный воспроизводить заданный желаемый сигнал:
+\[
+    g_{\text{ж}}(t) = 9e^{-0.2t}\sin(3t + 5) + \sin(t).
+\]
+
+Рассмотрим составляющие желаемого выхода:
+\begin{itemize}
+    \item Гармоническая составляющая $\sin(t)$ с частотой $\omega_1 = 1$ рад/с соответствует паре чисто мнимых собственных значений:
+    \[
+        \lambda_{1,2} = \pm i.
+    \]
+    \item Затухающая гармоническая составляющая $9e^{-0.2t}\sin(3t + 5)$ с коэффициентом затухания $\sigma = 0.2$ и частотой $\omega_2 = 3$ рад/с соответствует паре комплексно-сопряженных собственных значений:
+    \[
+        \lambda_{3,4} = -0.2 \pm 3i.
+    \]
+\end{itemize}
+
+Таким образом, матрица состояния $A$ должна иметь следующие собственные значения:
+\[
+    \sigma(A) = \{\pm i, \, -0.2 \pm 3i\}.
+\]
+
+Построим матрицу $A$ в блочно-диагональной форме (жордановой форме):
+\[
+    A = \begin{bmatrix}
+        0 & 1 & 0 & 0 \\
+        -1 & 0 & 0 & 0 \\
+        0 & 0 & -0.2 & 3 \\
+        0 & 0 & -3 & -0.2
+    \end{bmatrix}.
+\]
+
+Общее решение однородной линейной системы при нулевом входе описывается выражением:
+\[
+    x(t) = e^{At}x(0), \qquad g(t) = C x(t) = C e^{At} x(0).
+\]
+
+Матричная экспонента $e^{At}$ для данной структуры имеет вид:
+\[
+    e^{At} = \begin{bmatrix}
+        \cos(t) & \sin(t) & 0 & 0 \\
+        -\sin(t) & \cos(t) & 0 & 0 \\
+        0 & 0 & e^{-0.2t}\cos(3t) & e^{-0.2t}\sin(3t) \\
+        0 & 0 & -e^{-0.2t}\sin(3t) & e^{-0.2t}\cos(3t)
+    \end{bmatrix}.
+\]
+
+Выход системы $g(t)$ формируется как линейная комбинация элементов состояния:
+\[
+    g(t) = \begin{bmatrix} c_1 & c_2 & c_3 & c_4 \end{bmatrix} e^{At} x(0).
+\]
+
+Используя формулы приведения для тригонометрической функции желаемого сигнала с фазой $\sin(3t + 5) = \sin(3t)\cos(5) + \cos(3t)\sin(5)$, выберем параметры векторов так, чтобы в точности совпасть с заданным $g_{\text{ж}}(t)$. В результате получаем следующие параметры математической модели:
+\begin{itemize}
+    \item Матрица системы $A$:
+    \[
+        A = \begin{bmatrix}
+            0 & 1 & 0 & 0 \\
+            -1 & 0 & 0 & 0 \\
+            0 & 0 & -0.2 & 3 \\
+            0 & 0 & -3 & -0.2
+        \end{bmatrix}
+    \]
+    \item Вектор начальных условий $x(0)$:
+    \[
+        x(0) = \begin{bmatrix}
+            0 \\ 1 \\ 9\sin(5) \\ 9\cos(5)
+        \end{bmatrix}
+    \]
+    \item Матрица выхода $C$:
+    \[
+        C = \begin{bmatrix} 1 & 0 & 1 & 0 \end{bmatrix}
+    \]
+\end{itemize}
+
+\subsection{Моделирование работы командного генератора}
+
+В соответствии с разработанной математической моделью была построена схема моделирования командного генератора в среде Simulink, использующая исключительно блоки элементарных операций (интеграторы, усилители и сумматоры).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{scheme3.png}
+    \caption{Схема моделирования командного генератора в среде Simulink}
+    \label{fig:scheme3}
+\end{figure}
+
+На рисунках ниже представлены результаты симуляции работы командного генератора для Варианта 3: сравнительный график желаемого сигнала $g_{\text{ж}}(t)$ и выхода генератора $g(t)$, а также график погрешности $e(t) = g_{\text{ж}}(t) - g(t)$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{kg_comparison.png}
+    \caption{Сравнение желаемого сигнала $g_{\text{ж}}(t)$ и выхода КГ $g(t)$}
+    \label{fig:kg_comparison}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{kg_error.png}
+    \caption{График ошибки моделирования $e(t) = g_{\text{ж}}(t) - g(t)$}
+    \label{fig:kg_error}
+\end{figure}
+
+Как видно из полученных графиков, выходной сигнал автономного командного генератора с высокой точностью воспроизводит заданный желаемый сигнал. Ошибка моделирования находится в диапазоне машинной точности ($10^{-11}$), что подтверждает правильность аналитического синтеза и корректность построения схемы в Simulink.
+
+
+\subsection{Выводы по заданию 3}
+По результатам выполнения задания 3 можно сделать следующие выводы:
+\begin{itemize}
+    \item Успешно выполнена аналитическая разработка математической модели командного генератора в пространстве состояний для заданного сигнала $g_{\text{ж}}(t)$.
+    \item Построена корректная схема моделирования в Simulink на основе элементарных операционных блоков.
+    \item Компьютерное моделирование подтвердило высокую точность синтезированной системы: выходной сигнал $g(t)$ в точности воспроизводит желаемый сигнал с погрешностью в пределах машинной точности ($\sim 10^{-11}$).
+\end{itemize}
+
+
+\newpage
+\section*{ЗАКЛЮЧЕНИЕ}
+\addcontentsline{toc}{section}{ЗАКЛЮЧЕНИЕ}
+
+В ходе выполнения лабораторной работы были исследованы основные динамические свойства линейных систем автоматического управления:
+\begin{enumerate}
+    \item Исследовано свободное движение линейных систем второго порядка при различных типах корней характеристического уравнения, подтверждена связь между их расположением и устойчивостью системы.
+    \item Выполнен аналитический расчет и построена область устойчивости для системы третьего порядка с использованием критерия Гурвица, а также проверено влияние коэффициента передачи регулятора на характер переходных процессов.
+    \item Осуществлен успешный аналитический синтез и компьютерное моделирование автономного командного генератора в среде Simulink, подтвердивший высокую точность воспроизведения заданного сложного гармонического сигнала.
+\end{enumerate}
+Все поставленные задачи выполнены в полном объеме, а результаты аналитических расчетов полностью подтвердились данными компьютерного моделирования.
+
+\end{document}
