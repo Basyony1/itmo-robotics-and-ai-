@@ -24,7 +24,7 @@ Each lab includes LTspice simulations, measured characteristics and a report.
 ### Digital
 | # | Topic | What's covered | Status |
 |---|-------|----------------|--------|
-| 5 | [Transistor switch and logic inverter](lab5/) | BJT and MOSFET switches, inverter transfer characteristics | 🚧 |
+| 5 | [Transistor switch and logic inverter](lab5/) | BJT and MOSFET switches, inverter transfer characteristics | ✅ |
 | 6 | [Logic families](lab6/) | NOT, AND, OR, NAND, NOR gates in DRL, RTL, DTL, TTL, MOS and CMOS | ✅ |
 | 7 | [Combinational and sequential logic](lab7/) | Multiplexers, demultiplexers, encoders, decoders, adders; flip-flops, registers, counters | 🚧 |
 | 8 | [DAC and ADC](lab8/) | String DAC and flash ADC on comparators, resolution and conversion accuracy | 🚧 |
