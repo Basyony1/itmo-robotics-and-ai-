@@ -38,7 +38,6 @@ The most frequent error is **Sitting ↔ Standing**: both postures are static, s
 
 ## 📁 Files
 - [`lab1_classification.ipynb`](lab1_classification.ipynb) — notebook with code and outputs
-- [`lab1_report.pdf`](lab1_report.pdf) — report
 - [`images/`](images/) — charts
 
 To run the notebook, put `train.csv` and `test.csv` from the dataset into `/data/notebook_files/` or next to the notebook.
