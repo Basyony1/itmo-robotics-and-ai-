@@ -1,0 +1,67 @@
+\usepackage{cmap}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage[a4paper, left=25mm, right=15mm, top=20mm, bottom=20mm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{indentfirst}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{setspace}
+
+\graphicspath{{figures/}}
+\captionsetup{labelsep=period, font=small}
+\captionsetup[table]{justification=raggedleft, singlelinecheck=false}
+\setlength{\parindent}{1.25cm}
+\onehalfspacing
+\setlist{nosep, leftmargin=1.5cm}
+\renewcommand{\arraystretch}{1.12}
+\newcommand{\nm}[1]{\overline{#1}}
+
+% ---------- титульный лист ----------
+% #1 -- номер работы, #2 -- тема
+\newcommand{\itmotitle}[2]{%
+\begin{titlepage}
+\begin{center}
+\singlespacing
+Министерство науки и высшего образования Российской Федерации\\[2mm]
+Федеральное государственное автономное образовательное учреждение высшего образования
+«Национальный исследовательский университет ИТМО»\\
+(университет ИТМО)\\[6mm]
+Факультет «Систем управления и робототехники»
+
+\vspace{38mm}
+
+{\large\bfseries ОТЧЕТ\\[1mm] О ЛАБОРАТОРНОЙ РАБОТЕ №#1}\\[4mm]
+По дисциплине «Электроника и схемотехника»\\[3mm]
+на тему:\\[1mm]
+{\bfseries «#2»}\\[6mm]
+Вариант 2
+\end{center}
+
+\vspace{30mm}
+
+\begin{flushright}
+\begin{minipage}{0.62\textwidth}
+\singlespacing
+Преподаватель: Зарина Ольга Андреевна\\[4mm]
+Выполнили:\\
+Басиони Адельсалам Али Абдельсалам -- 465144\\
+Боврджи Тамим Махер Мохаммед -- 412894\\[4mm]
+Поток: ЭЛЕК И СХЕМ R БАК 1.2
+\end{minipage}
+\end{flushright}
+
+\vfill
+\begin{center}
+г. Санкт-Петербург\\
+2026
+\end{center}
+\end{titlepage}
+\setcounter{page}{2}
+}
