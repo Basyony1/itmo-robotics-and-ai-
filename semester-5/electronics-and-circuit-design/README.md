@@ -16,18 +16,18 @@ Each lab includes LTspice simulations, measured characteristics and a report.
 ### Analog
 | # | Topic | What's covered | Status |
 |---|-------|----------------|--------|
-| 1 | [Semiconductor diode](lab1/) | I-V characteristics of a diode, forward and reverse bias | 🚧 |
-| 2 | [Bipolar transistor and amplifier stage](lab2/) | Input and output characteristics of a BJT, design of an amplifier stage | 🚧 |
-| 3 | [Field-effect transistor](lab3/) | Transfer and output characteristics of a FET | 🚧 |
-| 4 | [Multivibrator](lab4/) | Operation of a transistor multivibrator, oscillation period and waveforms | 🚧 |
+| 1 | [Semiconductor diode](lab1/) | I-V characteristics of a diode, forward and reverse bias | ✅ |
+| 2 | [Bipolar transistor and amplifier stage](lab2/) | Input and output characteristics of a BJT, design of an amplifier stage | ✅ |
+| 3 | [Field-effect transistor](lab3/) | Transfer and output characteristics of a FET | ✅ |
+| 4 | [Multivibrator](lab4/) | Operation of a transistor multivibrator, oscillation period and waveforms | ✅ |
 
 ### Digital
 | # | Topic | What's covered | Status |
 |---|-------|----------------|--------|
 | 5 | [Transistor switch and logic inverter](lab5/) | BJT and MOSFET switches, inverter transfer characteristics | ✅ |
 | 6 | [Logic families](lab6/) | NOT, AND, OR, NAND, NOR gates in DRL, RTL, DTL, TTL, MOS and CMOS | ✅ |
-| 7 | [Combinational and sequential logic](lab7/) | Multiplexers, demultiplexers, encoders, decoders, adders; flip-flops, registers, counters | 🚧 |
-| 8 | [DAC and ADC](lab8/) | String DAC and flash ADC on comparators, resolution and conversion accuracy | 🚧 |
+| 7 | [Combinational and sequential logic](lab7/) | Multiplexers, demultiplexers, encoders, decoders, adders; flip-flops, registers, counters | ✅ |
+| 8 | [DAC and ADC](lab8/) | String DAC and flash ADC on comparators, resolution and conversion accuracy | ✅ |
 
 ## 📁 Structure
 ```
