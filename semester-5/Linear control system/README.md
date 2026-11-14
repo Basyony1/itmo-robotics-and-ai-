@@ -15,5 +15,5 @@ Faculty of Control Systems and Robotics, ITMO University, 2026.
 | 2 | [Free motion and stability](Lab2/) | System modes, root stability criterion, Hurwitz criterion and stability regions in the (K, T₁) plane, command generator synthesis | ✅ |
 | 3 | [Forced motion and performance indices](Lab3/) | Step and impulse responses, degree of stability η and oscillation μ, settling time and overshoot | ✅ |
 | 4 | [Typical dynamic elements](Lab4/) | Frequency responses (magnitude, phase, Bode, Nyquist) of a DC motor, capacitor, spring-mass system and op-amp controller | ✅ |
-| 5 | [Accuracy of control systems](Lab5/) | Steady-state error, type of system (astatism), P / I / PI controllers, external disturbances, error coefficients | 🚧 |
+| 5 | [Accuracy of control systems](Lab5/) | Steady-state error, type of system (astatism), P / I / PI controllers, external disturbances, error coefficients | ✅ |
 | 6 | [Input-output controllers](Lab6/) | PID tuning with standard transfer functions (Butterworth and binomial polynomials), tracking a sinusoidal reference | 🚧 |
