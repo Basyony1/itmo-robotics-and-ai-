@@ -166,7 +166,7 @@ The experiments demonstrate how neural network architecture and training hyperpa
 
 ## Author
 
-**AbdelSalam BayonY**
+**Abdelsalam Basyony**
 
 ITMO University
 
