@@ -13,4 +13,3 @@
 
 ## 📁 Files
 - [`pattern_recognition_slides.pdf`](pattern_recognition_slides.pdf) — slides (11)
-- [`speech_ru.md`](speech_ru.md) — speaker text for every slide (RU)
