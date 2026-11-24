@@ -16,7 +16,7 @@ Faculty of Control Systems and Robotics, ITMO University, 2026.
 |---|-------|----------------|--------|
 | 1 | [Classification](lab1/) | Human activity recognition from smartphone sensors: logistic regression, SVM, kNN, decision tree, random forest; precision / recall / F1; effect of hyperparameters | ✅ |
 | 2 | [Neural networks](Lab2/)  | House price regression with a fully connected network (Keras): neurons, hidden layers, epochs, batch size, optimizers, loss functions | ✅ |
-| 3 | Convolutional neural networks | Flower classification (PyTorch): CNN from scratch, transfer learning with ResNet-18, own architecture | 🚧 |
+| 3 | [Convolutional neural networks](La3/) | Flower classification (PyTorch): CNN from scratch, transfer learning with ResNet-18, own architecture | ✅ |
 
 ## 🎤 Report
 
