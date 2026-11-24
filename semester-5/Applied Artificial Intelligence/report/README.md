@@ -9,7 +9,7 @@
 | Lab | Task | Best result |
 |-----|------|-------------|
 | [Lab 1](../lab1/) | Activity recognition from smartphone sensors | SVM — 96.5 % |
-| Lab 3 | Flower recognition from photos (5 classes) | ResNet-18, transfer learning — 87.3 % |
+| [Lab 3](../Lab3/) | Flower recognition from photos (5 classes) | ResNet-18, transfer learning — 87.3 % |
 
 ## 📁 Files
 - [`pattern_recognition_slides.pdf`](pattern_recognition_slides.pdf) — slides (11)
